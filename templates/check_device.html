@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        // Execute immediately when the page loads
+        window.onload = function() {
+            // Check for device ID and user info in localStorage
+            let deviceId = localStorage.getItem('device_id');
+            let userInfo = localStorage.getItem('user_info');
+            
+            if (deviceId && userInfo) {
+                // Both device ID and user info exist
+                console.log("Found existing device ID and user info in localStorage");
+                
+                try {
+                    // Parse the user info JSON
+                    const userInfoObj = JSON.parse(userInfo);
+                    
+                    // Create a direct scan without showing the form
+                    fetch('/direct_scan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            device_id: deviceId,
+                            user_id: userInfoObj.user_id,
+                            short_id: '{{short_id}}'
+                        })
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            response.json().then(data => {
+                                if (data.url) {
+                                    // Add scan to history in localStorage
+                                    const scanHistory = JSON.parse(localStorage.getItem('scan_history') || '[]');
+                                    scanHistory.push({
+                                        scan_id: data.scan_id,
+                                        short_url: '{{short_id}}',
+                                        timestamp: data.timestamp
+                                    });
+                                    localStorage.setItem('scan_history', JSON.stringify(scanHistory));
+                                    
+                                    // Redirect to target URL
+                                    window.location.href = data.url;
+                                }
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.error("Error parsing user info:", e);
+                    checkDeviceOnly();
+                }
+            } else if (deviceId) {
+                // Only device ID exists
+                checkDeviceOnly();
+            } else {
+                console.log("No device ID found in localStorage, requesting form");
+                requestNewForm();
+            }
+        };
+        
+        function checkDeviceOnly() {
+            const deviceId = localStorage.getItem('device_id');
+            console.log("Found existing device ID in localStorage:", deviceId);
+            
+            // Use the existing device ID from localStorage
+            fetch('/check_device', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    device_id: deviceId,
+                    short_id: '{{short_id}}'
+                })
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    response.text().then(html => {
+                        document.open();
+                        document.write(html);
+                        document.close();
+                    });
+                }
+            });
+        }
+        
+        function requestNewForm() {
+            // Request a form with a new device ID
+            fetch('/get_form/{{short_id}}')
+                .then(response => response.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                });
+        }
+    </script>
+</head>
+<body>
+    <p>Checking device information...</p>
+</body>
+</html>

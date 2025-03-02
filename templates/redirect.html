@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        // Save user information in localStorage
+        (function() {
+            // Store device_id (already stored, but ensure it's there)
+            localStorage.setItem('device_id', '{{device_id}}');
+            
+            // Store user information
+            const userInfo = {
+                user_id: '{{user_id}}',
+                name: '{{name}}',
+                email: '{{email}}',
+                mobile: '{{mobile}}'
+            };
+            
+            // Store as JSON string
+            localStorage.setItem('user_info', JSON.stringify(userInfo));
+            console.log('User information stored in localStorage:', userInfo);
+            
+            // Also store scan info
+            const scanHistory = JSON.parse(localStorage.getItem('scan_history') || '[]');
+            
+            // Add this scan to history
+            scanHistory.push({
+                scan_id: '{{scan_id}}',
+                short_url: '{{short_url}}',
+                timestamp: '{{timestamp}}'
+            });
+            
+            // Store scan history
+            localStorage.setItem('scan_history', JSON.stringify(scanHistory));
+            console.log('Scan added to history in localStorage');
+            
+            // Redirect to target URL
+            window.location.href = '{{url}}';
+        })();
+    </script>
+</head>
+<body>
+    <p>Processing your information...</p>
+</body>
+</html>

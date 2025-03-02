@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Information</title>
+    <script>
+        // Store the device_id in localStorage as soon as the page loads
+        (function() {
+            const deviceId = '{{device_id}}';
+            localStorage.setItem('device_id', deviceId);
+            console.log("Stored new device ID in localStorage:", deviceId);
+        })();
+    </script>
+</head>
+<body>
+    <form action="/user_form" method="post">
+        <input type="hidden" name="short_id" value="{{short_id}}" />
+        <input type="hidden" id="device_id" name="device_id" value="{{device_id}}" />
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="mobile">Mobile:</label><br>
+        <input type="tel" id="mobile" name="mobile" required><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
