@@ -127,7 +127,7 @@ async fn handle_shorten(
     db: Database,
     config: Arc<Config>
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    let short_id = nanoid!(1); // Increased to 5 characters for better uniqueness
+    let short_id = nanoid!(10); // 
     let short_url = format!("{}/{}", config.base_url, short_id);
     let timestamp = Utc::now();
 
