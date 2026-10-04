@@ -83,3 +83,7 @@ To build for production:
 ```
 cargo build --release
 ```
+
+## Author
+
+[rajivranjanmars](https://rajivranjana.in)

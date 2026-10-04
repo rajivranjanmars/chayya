@@ -2,6 +2,8 @@
 name = "chaaya"
 version = "0.1.0"
 edition = "2018"
+authors = ["rajivranjanmars"]
+homepage = "https://rajivranjana.in"
 
 [dependencies]
 warp = "0.3"
